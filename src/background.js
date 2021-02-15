@@ -9,14 +9,16 @@ function openTabs(item) {
     let getExistingPinnedTabs = browser.tabs.query({ "pinned": true });
     getExistingPinnedTabs.then(
         (existingPinnedTabs) => {
-            pinIds = existingPinnedTabs.map( tab => tab.id );
-            return browser.tabs.remove(pinIds);
+            pinURLs = existingPinnedTabs.map( tab => tab.url );
+            return pinURLs;
         }
     ).then(() => {
         var pinned_websites = item.pinned_websites;
         pinned_websites.forEach(function(website) {
-            browser.tabs.create({url: website, "pinned": true,
+            if (existingPinnedTabs.indexOf(website) === -1){
+                browser.tabs.create({url: website, "pinned": true,
                 "active": false});
+            }
         });
         opened_tabs = true;
     });
